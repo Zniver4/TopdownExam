@@ -83,4 +83,17 @@ public class JsonOleada : MonoBehaviour
             Debug.LogWarning($"No hay prefab asignado para el enemigo tipo {enemyType} o no hay puntos de spawn.");
         }
     }
+    [ContextMenu("Forzar fin de oleadas y mostrar Canvas")]
+    void ForceEndWaves()
+    {
+        Debug.Log("⏩ Oleadas forzadas manualmente desde el Inspector");
+
+        StopAllCoroutines(); // Detiene cualquier oleada en curso
+
+        if (endWaveCanvas != null)
+            endWaveCanvas.SetActive(true);
+        else
+            Debug.LogWarning("⚠️ No se ha asignado el Canvas de fin de oleadas.");
+    }
+
 }
