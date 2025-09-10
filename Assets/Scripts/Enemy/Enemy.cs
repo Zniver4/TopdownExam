@@ -1,9 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     public float velocidad = 3f;
     public float health = 50f;
+    public float damageToPlayer = 10f; 
+    public float attackCooldown = 1f;
+    private float nextAttackTime = 0f;
 
     private Transform jugador;
 
@@ -28,7 +31,7 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
-        Debug.Log($"{gameObject.name} recibi� {damage} de da�o. Vida restante: {health}");
+        Debug.Log($"{gameObject.name} recibió {damage} de daño. Vida restante: {health}");
 
         if (health <= 0f)
         {
@@ -40,5 +43,18 @@ public class Enemy : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} ha muerto.");
         gameObject.SetActive(false);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player") && Time.time >= nextAttackTime)
+        {
+            Vida player = other.GetComponent<Vida>();
+            if (player != null)
+            {
+                player.TakeDamage(damageToPlayer);
+                nextAttackTime = Time.time + attackCooldown; // 🔹 espera antes del siguiente golpe
+            }
+        }
     }
 }
