@@ -8,15 +8,21 @@ public class JsonOleada : MonoBehaviour
     public string jsonUrl = "https://kev-games-development.net/Services/WavesTest.json";
 
     [Header("Prefabs de enemigos (indexados por ID del JSON)")]
-    public GameObject[] enemyPrefabs; 
+    public GameObject[] enemyPrefabs;
 
     [Header("Posición de spawn")]
-    public Transform [] spawnPoint;
+    public Transform[] spawnPoint;
+
+    [Header("Canvas de fin de oleadas")]
+    public GameObject endWaveCanvas; 
 
     private RootData wavesData;
 
     void Start()
     {
+        if (endWaveCanvas != null)
+            endWaveCanvas.SetActive(false);
+
         StartCoroutine(LoadWaves());
     }
 
@@ -49,7 +55,6 @@ public class JsonOleada : MonoBehaviour
             foreach (var enemy in wave.Enemies)
             {
                 yield return new WaitForSeconds(enemy.Time);
-
                 SpawnEnemy(enemy.Enemy);
             }
 
@@ -59,6 +64,9 @@ public class JsonOleada : MonoBehaviour
         }
 
         Debug.Log("🎉 Todas las oleadas completadas");
+
+        if (endWaveCanvas != null)
+            endWaveCanvas.SetActive(true);
     }
 
     void SpawnEnemy(int enemyType)
@@ -67,7 +75,6 @@ public class JsonOleada : MonoBehaviour
 
         if (index >= 0 && index < enemyPrefabs.Length && spawnPoint.Length > 0)
         {
-            // Selecciona un punto de spawn aleatorio
             int spawnIndex = Random.Range(0, spawnPoint.Length);
             Instantiate(enemyPrefabs[index], spawnPoint[spawnIndex].position, Quaternion.identity);
         }

@@ -3,7 +3,7 @@
 public class Vida : MonoBehaviour
 {
     public float health = 100f;
-
+    public GameObject gameOverCanvas;
     public void TakeDamage(float damage)
     {
         health -= damage;
@@ -15,9 +15,15 @@ public class Vida : MonoBehaviour
         }
     }
 
+    [ContextMenu("Die")]
     void Die()
     {
         Debug.Log("Jugador ha muerto.");
-        gameObject.SetActive(false); // 🔹 o respawn, según tu diseño
+        gameObject.SetActive(false); 
+
+        if (gameOverCanvas != null)
+        {
+            gameOverCanvas.SetActive(true); 
+        }
     }
 }
