@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Movement : MonoBehaviour
 {
@@ -7,6 +9,9 @@ public class Movement : MonoBehaviour
     public LineRenderer laserRenderer;
     public Transform laserOrigin;
     public float laserLength = 10f;
+    public GameObject projectilePrefab;
+    public float projectileSpeed = 20f;
+    public float projectileLifeTime = 2f;
 
     void Update()
     {
@@ -40,9 +45,31 @@ public class Movement : MonoBehaviour
             laserRenderer.SetPosition(1, laserOrigin.position + laserOrigin.forward * laserLength);
         }
     }
-
     void Shoot()
     {
-        Debug.Log("Disparo realizado");
+        if (laserOrigin != null)
+        {
+            Vector3 spawnPosition = laserOrigin.position + laserOrigin.forward * laserLength;
+            Quaternion spawnRotation = laserOrigin.rotation;
+
+            GameObject projectile = BulletPool.Instance.GetBullet(spawnPosition, spawnRotation);
+
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = laserOrigin.forward * projectileSpeed;
+            }
+
+            StartCoroutine(DisableAfterTime(projectile, projectileLifeTime));
+        }
     }
+
+    IEnumerator DisableAfterTime(GameObject obj, float time)
+    {
+        yield return new WaitForSeconds(time);
+        if (obj != null)
+            BulletPool.Instance.ReturnBullet(obj);
+    }
+
+    
 }
